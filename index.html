@@ -1,1 +1,39 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send to Telegram</title>
+</head>
+<body>
+    <form id="telegramForm">
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message">
+        <button type="button" onclick="sendMessage()">Send</button>
+    </form>
+    <script>
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            fetch('http://127.0.0.1:5000/send_to_telegram', {  // Make sure the URL matches your Flask server's URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.status) {
+                    alert('Message sent');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending message');
+            });
+        }
+    </script>
+</body>
+</html>
