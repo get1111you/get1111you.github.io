@@ -4,40 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram WebApp</title>
-</head>
-<body>
-    <h1>Welcome to Telegram WebApp</h1>
-    <button id="sendMsgButton">Send Message</button>
-
     <script>
-        // Initialize Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        async function fetchTime() {
+            const response = await fetch('http://your-server-url/get-time');
+            const data = await response.json();
+            document.getElementById('time').innerText = data.time;
+        }
 
-        document.getElementById('sendMsgButton').addEventListener('click', function() {
-            const user = tg.initDataUnsafe.user;
-            const message = {
-                chat_id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                username: user.username,
-                data: 'Button clicked!'
-            };
-            
-            fetch('/webapp', {
+        async function sendMessage() {
+            const message = document.getElementById('message').value;
+            const response = await fetch('http://your-server-url/send-message', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(message)
-            }).then(response => {
-                if (response.ok) {
-                    console.log('Message sent successfully');
-                } else {
-                    console.error('Error sending message');
-                }
+                body: JSON.stringify({ message: message })
             });
-        });
+            const data = await response.json();
+            alert(data.message);
+        }
     </script>
+</head>
+<body>
+    <h1>Telegram WebApp</h1>
+    <button onclick="fetchTime()">Get Current Time</button>
+    <p id="time"></p>
+    <input type="text" id="message" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send Message</button>
 </body>
 </html>
